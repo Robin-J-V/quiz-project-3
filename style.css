@@ -80,3 +80,13 @@ body {
   .answer-button {
     transition: transform 0.2s, box-shadow 0.2s, background-color 0.3s ease;
   }
+
+
+  #timer {
+    font-size: 48px;
+    font-weight: bold;
+    color: #ffffff;
+    text-shadow: 0 0 10px #9333ea;
+    margin-bottom: 20px;
+    text-align: center;
+  }
