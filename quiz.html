@@ -2,103 +2,75 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Quiz</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Quiz Question</title>
   <link rel="stylesheet" href="style.css">
-
-  <style>
-    .question {
-      margin-bottom: 20px;
-    }
-    #timer {
-      font-size: 1.2em;
-      font-weight: bold;
-      margin-bottom: 20px;
-    }
-  </style>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700&display=swap" rel="stylesheet">
 </head>
 <body>
-  <h1>Quiz</h1>
-  <div id="timer">Time Remaining: 60 seconds</div>
-  <div id="quiz-container">
-    Loading quiz...
+  <div id="page-container">
+    <h1 id="question-number">Question 1</h1>
+    <div id="quiz-inner">
+      <h2 id="question-text">Loading question...</h2>
+      <div id="answers"></div>
+    </div>
   </div>
-  <button id="submit-btn" style="display:none;">Submit Quiz</button>
 
   <script>
-    let quizData = [];
-    let userAnswers = [];
-    let timeRemaining = 60; // seconds
-    let timerInterval;
+    let questions = [];
+    let currentIndex = 0;
+    const maxQuestions = 10;
+    let score = 0;
 
-    // Function to start the timer
-    function startTimer() {
-      timerInterval = setInterval(() => {
-        timeRemaining--;
-        document.getElementById('timer').innerText = `Time Remaining: ${timeRemaining} seconds`;
-        if (timeRemaining <= 0) {
-          clearInterval(timerInterval);
-          autoSubmitQuiz();
-        }
+    async function loadQuestion() {
+      if (questions.length === 0) {
+        const response = await fetch('questions.json');
+        questions = await response.json();
+      }
+
+      if (currentIndex >= maxQuestions || currentIndex >= questions.length) {
+        window.location.href = `/results.html?score=${score}`;
+        return;
+      }
+
+      const question = questions[currentIndex];
+      document.getElementById('question-number').textContent = `Question ${currentIndex + 1}`;
+      document.getElementById('question-text').textContent = question.question;
+
+      const answersDiv = document.getElementById('answers');
+      answersDiv.innerHTML = '';
+
+      const options = ['A', 'B', 'C', 'D'];
+      options.forEach(letter => {
+        const button = document.createElement('button');
+        button.classList.add('answer-button');
+        button.textContent = `${letter}: ${question[letter]}`;
+        button.dataset.letter = letter;
+        button.onclick = () => checkAnswer(letter, question.answer, button);
+        answersDiv.appendChild(button);
+      });
+    }
+
+    function checkAnswer(selected, correct, clickedButton) {
+      const allButtons = document.querySelectorAll('.answer-button');
+      allButtons.forEach(btn => btn.disabled = true);
+
+      if (selected === correct) {
+        clickedButton.classList.add('correct');
+        score++;
+      } else {
+        clickedButton.classList.add('incorrect');
+        const correctButton = [...allButtons].find(btn => btn.dataset.letter === correct);
+        if (correctButton) correctButton.classList.add('correct');
+      }
+
+      setTimeout(() => {
+        currentIndex++;
+        loadQuestion();
       }, 1000);
     }
 
-    // Function to automatically submit the quiz when time expires
-    function autoSubmitQuiz() {
-      // Gather user's answers
-      userAnswers = quizData.map((q, index) => {
-        const selected = document.querySelector(`input[name="question-${index}"]:checked`);
-        return selected ? selected.value : null;
-      });
-      // Send answers to server for evaluation
-      fetch('/api/submit-quiz', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({
-          answers: userAnswers,
-          questions: quizData
-        })
-      })
-      .then(response => response.json())
-      .then(data => {
-        // Redirect to results page with score as URL parameter
-        window.location.href = `/results.html?score=${data.score}`;
-      });
-    }
-
-    // Fetch quiz questions from the server and start the timer
-    fetch('/api/start-quiz')
-      .then(response => response.json())
-      .then(data => {
-        quizData = data.questions;
-        displayQuiz();
-        startTimer();
-      });
-
-    function displayQuiz() {
-      const container = document.getElementById('quiz-container');
-      container.innerHTML = '';
-      quizData.forEach((q, index) => {
-        const questionDiv = document.createElement('div');
-        questionDiv.className = 'question';
-        questionDiv.innerHTML = `<p>${index + 1}. ${q.question}</p>`;
-        // Display options A-D
-        ['A', 'B', 'C', 'D'].forEach(letter => {
-          const label = document.createElement('label');
-          label.innerHTML = `<input type="radio" name="question-${index}" value="${letter}"> ${letter}. ${q[letter]}<br>`;
-          questionDiv.appendChild(label);
-        });
-        container.appendChild(questionDiv);
-      });
-      document.getElementById('submit-btn').style.display = 'block';
-    }
-
-    document.getElementById('submit-btn').addEventListener('click', () => {
-      clearInterval(timerInterval);
-      autoSubmitQuiz();
-    });
+    loadQuestion();
   </script>
 </body>
 </html>
-

@@ -67,3 +67,16 @@ body {
     transform: scale(1.05);
     box-shadow: 0 0 15px #a855f7, 0 0 25px #9333ea inset;
   }
+
+
+  .answer-button.correct {
+    background-color: #28a745 !important;
+  }
+  
+  .answer-button.incorrect {
+    background-color: #dc3545 !important;
+  }
+  
+  .answer-button {
+    transition: transform 0.2s, box-shadow 0.2s, background-color 0.3s ease;
+  }
