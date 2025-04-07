@@ -10,18 +10,35 @@
 <body>
   <div id="page-container">
     <h1>Quiz Results</h1>
-    <div id="result"></div>
+    <div id="result">Loading your results...</div>
     <button id="home-btn">Go to Home</button>
   </div>
 
   <script>
-    const params = new URLSearchParams(window.location.search);
-    const score = params.get('score');
-    document.getElementById('result').innerText = `Your score is: ${score} / 10`;
+    async function submitAndDisplayResults() {
+      const storedScore = localStorage.getItem('quizScore');
+      if (!storedScore) {
+        document.getElementById('result').innerText = 'No score found.';
+        return;
+      }
+
+      const response = await fetch('/api/submit-quiz', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ score: parseInt(storedScore), answers: [] })
+      });
+
+      const data = await response.json();
+      document.getElementById('result').innerText = `Your score is: ${data.score} / 10`;
+
+      localStorage.removeItem('quizScore');
+    }
 
     document.getElementById('home-btn').addEventListener('click', () => {
       window.location.href = '/index.html';
     });
+
+    submitAndDisplayResults();
   </script>
 </body>
 </html>

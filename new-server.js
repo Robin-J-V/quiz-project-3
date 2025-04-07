@@ -1,38 +1,40 @@
 const express = require('express');
 const fs = require('fs');
 const path = require('path');
-const app = express();
 
+const quizApp = express();
 const PORT = 3000;
 
-app.use(express.static('public'));
-app.use(express.json());
+quizApp.use(express.static(__dirname));
+quizApp.use(express.json());
 
-let selectedQuestions = [];
+let quizBatch = [];
 
-app.get('/', (req, res) => {
-  res.sendFile(path.join(__dirname, 'public', 'index.html'));
+quizApp.get('/', (req, res) => {
+  const homepagePath = path.resolve(__dirname, 'index.html');
+  res.sendFile(homepagePath);
 });
 
-app.get('/api/start-quiz', (req, res) => {
-  const allQuestions = JSON.parse(fs.readFileSync('./public/questions.json'));
-  selectedQuestions = shuffleArray(allQuestions).slice(0, 10);
-  res.json({ questions: selectedQuestions });
+quizApp.get('/api/start-quiz', (req, res) => {
+  const filePath = path.resolve(__dirname, 'questions.json');
+  const questionPool = JSON.parse(fs.readFileSync(filePath, 'utf-8'));
+  quizBatch = randomizeList(questionPool).slice(0, 10);
+  res.json({ questions: quizBatch });
 });
 
-app.post('/api/submit-quiz', (req, res) => {
-  const { answers, score } = req.body;
-  res.json({ score });
+quizApp.post('/api/submit-quiz', (req, res) => {
+  const userData = req.body;
+  res.json({ score: userData.score });
 });
 
-function shuffleArray(array) {
-  for (let i = array.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1));
-    [array[i], array[j]] = [array[j], array[i]];
+function randomizeList(list) {
+  for (let i = list.length - 1; i > 0; i--) {
+    const rand = Math.floor(Math.random() * (i + 1));
+    [list[i], list[rand]] = [list[rand], list[i]];
   }
-  return array;
+  return list;
 }
 
-app.listen(PORT, () => {
-  console.log(`Server running at http://localhost:${PORT}`);
+quizApp.listen(PORT, () => {
+  console.log(`Listening on port ${PORT}`);
 });
