@@ -8,17 +8,19 @@
   <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700&display=swap" rel="stylesheet">
 </head>
 <body>
-  <div id="page-container">
-    <h1>Quiz Results</h1>
-    <div id="result">Loading your results...</div>
-    <button id="home-btn">Go to Home</button>
+  <div class="page-container">
+    <h1 class="results-title">Quiz Results</h1>
+    <div class="result-message">Loading your results...</div>
+    <button class="home-btn">Go to Home</button>
   </div>
 
   <script>
     async function submitAndDisplayResults() {
       const storedScore = localStorage.getItem('quizScore');
+      const resultEl = document.querySelector('.result-message');
+
       if (!storedScore) {
-        document.getElementById('result').innerText = 'No score found.';
+        resultEl.innerText = 'No score found.';
         return;
       }
 
@@ -29,12 +31,12 @@
       });
 
       const data = await response.json();
-      document.getElementById('result').innerText = `Your score is: ${data.score} / 10`;
+      resultEl.innerText = `Your score is: ${data.score} / 10`;
 
       localStorage.removeItem('quizScore');
     }
 
-    document.getElementById('home-btn').addEventListener('click', () => {
+    document.querySelector('.home-btn').addEventListener('click', () => {
       window.location.href = '/index.html';
     });
 

@@ -8,12 +8,12 @@
   <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700&display=swap" rel="stylesheet" />
 </head>
 <body>
-  <div id="page-container">
-    <div id="timer">Time left: 10</div>
-    <h1 id="question-number">Question 1</h1>
-    <div id="quiz-inner">
-      <h2 id="question-text">Loading question...</h2>
-      <div id="answers"></div>
+  <div class="page-container">
+    <h1 class="question-number">Question 1</h1>
+    <div class="timer">Time left: 10</div>
+    <div class="quiz-inner">
+      <h2 class="question-text">Loading question...</h2>
+      <div class="answers"></div>
     </div>
   </div>
 
@@ -44,10 +44,10 @@
       updateTimerDisplay();
 
       const question = questions[currentIndex];
-      document.getElementById('question-number').textContent = `Question ${currentIndex + 1}`;
-      document.getElementById('question-text').textContent = question.question;
+      document.querySelector('.question-number').textContent = `Question ${currentIndex + 1}`;
+      document.querySelector('.question-text').textContent = question.question;
 
-      const answersDiv = document.getElementById('answers');
+      const answersDiv = document.querySelector('.answers');
       answersDiv.innerHTML = '';
 
       const options = ['A', 'B', 'C', 'D'];
@@ -74,7 +74,7 @@
     }
 
     function updateTimerDisplay() {
-      document.getElementById('timer').textContent = `Time left: ${timeLeft}`;
+      document.querySelector('.timer').textContent = `Time left: ${timeLeft}`;
     }
 
     function disableButtons() {
