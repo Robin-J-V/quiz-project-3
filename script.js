@@ -304,5 +304,23 @@ function checkAnswer(selected, correct, clickedButton) {
  */
 function endQuiz() {
   localStorage.setItem('quizScore', score);
-  window.location.href = `/results.html`;
+  saveScore(score); 
+  window.location.href = `/results.html`; 
+}
+
+function startQuiz() {
+  const username = document.getElementById("username").value.trim();
+  if (!username) {
+    alert("Please enter your name before starting the quiz.");
+    return;
+  }
+  localStorage.setItem("quizUsername", username);
+  location.href = "quiz.html";
+}
+function saveScore(score) {
+  const name = localStorage.getItem("quizUsername") || "Anonymous";
+  const leaderboard = JSON.parse(localStorage.getItem("quizLeaderboard")) || [];
+
+  leaderboard.push({ name, score });
+  localStorage.setItem("quizLeaderboard", JSON.stringify(leaderboard));
 }

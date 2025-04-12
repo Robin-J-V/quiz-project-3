@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="dark">
 <head>
   <meta charset="UTF-8">
   <title>Quiz Results</title>
@@ -8,6 +8,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700&display=swap" rel="stylesheet">
 </head>
 <body>
+  <!-- Theme Toggle -->
   <div class="theme-switch-wrapper">
     <div class="theme-switch" id="themeSwitch" tabindex="0" role="switch">
       <div class="switch-track">
@@ -31,14 +32,28 @@
       </div>
     </div>
   </div>
+
+  <!-- Results Section -->
   <div class="page-container">
     <h1 class="results-title">Quiz Results</h1>
-    <div class="result-message">Loading your results...</div>
-    <button class="home-btn">Go to Home</button>
+    <div class="result-message">Click below to reveal your score!</div>
+    <button id="revealBtn">Reveal My Score</button>
+    <button class="home-btn" style="display:none;">Go to Leaderboard</button>
   </div>
 
+  <!-- Score + Sound Script -->
   <script>
-    function displayResults() {
+    let score = 0;
+
+    function playResultSound(score) {
+      const audio = new Audio(score >= 6 ? 'success.mp3' : 'fail.mp3');
+      audio.volume = 0.8;
+      audio.play().catch((err) => {
+        console.warn("Audio playback blocked:", err);
+      });
+    }
+
+    function revealScore() {
       const storedScore = localStorage.getItem('quizScore');
       const resultEl = document.querySelector('.result-message');
 
@@ -47,16 +62,24 @@
         return;
       }
 
-      resultEl.innerText = `Your score is: ${storedScore} / 10`;
-      localStorage.removeItem('quizScore');  // Clean up after displaying
+      score = parseInt(storedScore);
+      resultEl.innerText = `Your score is: ${score} / 10`;
+      playResultSound(score);
+      document.getElementById('revealBtn').style.display = 'none';
+      document.querySelector('.home-btn').style.display = 'inline-block';
+      localStorage.removeItem('quizScore');
     }
 
-    document.querySelector('.home-btn').addEventListener('click', () => {
-      window.location.href = '/index.html';
-    });
+    document.addEventListener('DOMContentLoaded', () => {
+      document.getElementById('revealBtn').addEventListener('click', revealScore);
 
-    displayResults();  // No need for API call
+      document.querySelector('.home-btn').addEventListener('click', () => {
+        window.location.href = '/leaderboard.html';
+      });
+    });
   </script>
+
+  <!-- Theme Script -->
   <script src="script.js"></script>
 </body>
 </html>
