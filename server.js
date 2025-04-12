@@ -14,31 +14,45 @@ fs.readFile('questions.json', 'utf8', (err, data) => {
     return;
   }
   questions = JSON.parse(data);
+
+  // Assign unique IDs if not present
+  questions.forEach((q, idx) => {
+    if (!q.id) q.id = `${idx}-${Math.floor(Math.random() * 10000)}`;
+  });
 });
 
-// Serve static files from the public folder
-app.use(express.static(path.join(__dirname, 'public')));
+app.use(express.static(__dirname));
 app.use(bodyParser.json());
 
-// API endpoint to start the quiz: select 10 random questions
+// 🆕 Serve index.html from root
+app.get('/', (req, res) => {
+  res.sendFile(path.join(__dirname, 'index.html'));
+});
+
+// ✅ Start quiz with optional count and used exclusion
 app.get('/api/start-quiz', (req, res) => {
-  // Shuffle questions and take 10
-  let shuffled = questions.sort(() => 0.5 - Math.random());
-  let selectedQuestions = shuffled.slice(0, 10);
+  const count = parseInt(req.query.count) || 10;
+  const usedIds = req.query.used ? req.query.used.split(',') : [];
+
+  const filtered = questions.filter(q => !usedIds.includes(q.id.toString()));
+  const shuffled = filtered.sort(() => 0.5 - Math.random());
+  const selectedQuestions = shuffled.slice(0, count);
+
   res.json({ questions: selectedQuestions });
 });
 
-// API endpoint to submit quiz answers and calculate the score
+// ✅ Calculate score
 app.post('/api/submit-quiz', (req, res) => {
-  const userAnswers = req.body.answers; // Array of user's answers (e.g., ['A', 'B', ...])
-  const quizQuestions = req.body.questions; // The quiz questions that were sent to the client
+  const userAnswers = req.body.answers || [];
+  const quizQuestions = req.body.questions || [];
   let score = 0;
-  
+
   quizQuestions.forEach((q, index) => {
     if (userAnswers[index] && userAnswers[index].toUpperCase() === q.answer.toUpperCase()) {
       score++;
     }
   });
+
   res.json({ score: score });
 });
 
