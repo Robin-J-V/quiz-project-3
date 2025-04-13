@@ -324,3 +324,51 @@ function saveScore(score) {
   leaderboard.push({ name, score });
   localStorage.setItem("quizLeaderboard", JSON.stringify(leaderboard));
 }
+
+/**
+ * Results Page
+ */
+function playResultSound(score) {
+  const audio = new Audio(score >= 6 ? 'success.mp3' : 'fail.mp3');
+  audio.volume = 0.8;
+  audio.play().catch((err) => {
+    console.warn("Audio playback blocked:", err);
+  });
+}
+
+function revealScore() {
+  const storedScore = localStorage.getItem('quizScore');
+  const resultEl = document.querySelector('.result-message');
+
+  if (!storedScore) {
+    resultEl.innerText = 'No score found.';
+    return;
+  }
+
+  score = parseInt(storedScore);
+  resultEl.innerText = `Your score is: ${score} / 10`;
+  playResultSound(score);
+  document.getElementById('revealBtn').style.display = 'none';
+  document.querySelector('.home-btn').style.display = 'inline-block';
+  localStorage.removeItem('quizScore');
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+  if (document.getElementById('revealBtn')) {
+    document.getElementById('revealBtn').addEventListener('click', revealScore);
+  }
+
+  const homeBtn = document.querySelector('.home-btn');
+  if (homeBtn) {
+    const isResultsPage = window.location.pathname.includes('results.html');
+    const isLeaderboardPage = window.location.pathname.includes('leaderboard.html');
+
+    homeBtn.addEventListener('click', () => {
+      if (isResultsPage) {
+        window.location.href = '/leaderboard.html';
+      } else if (isLeaderboardPage) {
+        window.location.href = '/';
+      }
+    });
+  }
+});

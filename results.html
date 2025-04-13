@@ -42,42 +42,7 @@
   </div>
 
   <!-- Score + Sound Script -->
-  <script>
-    let score = 0;
-
-    function playResultSound(score) {
-      const audio = new Audio(score >= 6 ? 'success.mp3' : 'fail.mp3');
-      audio.volume = 0.8;
-      audio.play().catch((err) => {
-        console.warn("Audio playback blocked:", err);
-      });
-    }
-
-    function revealScore() {
-      const storedScore = localStorage.getItem('quizScore');
-      const resultEl = document.querySelector('.result-message');
-
-      if (!storedScore) {
-        resultEl.innerText = 'No score found.';
-        return;
-      }
-
-      score = parseInt(storedScore);
-      resultEl.innerText = `Your score is: ${score} / 10`;
-      playResultSound(score);
-      document.getElementById('revealBtn').style.display = 'none';
-      document.querySelector('.home-btn').style.display = 'inline-block';
-      localStorage.removeItem('quizScore');
-    }
-
-    document.addEventListener('DOMContentLoaded', () => {
-      document.getElementById('revealBtn').addEventListener('click', revealScore);
-
-      document.querySelector('.home-btn').addEventListener('click', () => {
-        window.location.href = '/leaderboard.html';
-      });
-    });
-  </script>
+  <script src="script.js"></script>
 
   <!-- Theme Script -->
   <script src="script.js"></script>
