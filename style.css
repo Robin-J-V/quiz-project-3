@@ -246,3 +246,56 @@ button:hover {
   outline: 2px solid var(--primary-color);
   outline-offset: 2px;
 }
+
+/*Leaderboard*/
+
+.leaderboard-body {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  min-height: 100vh;
+  padding: 2rem;
+}
+
+.leaderboard-title {
+  font-size: 4rem;
+  margin-bottom: 2rem;
+  transition: color 0.3s ease;
+}
+
+[data-theme="dark"] .leaderboard-title {
+  color: #ffffff;
+  text-shadow: 0 0 20px rgba(255, 255, 255, 0.7);
+}
+
+[data-theme="light"] .leaderboard-title {
+  color: #3b0080;
+  text-shadow: none;
+}
+
+.leaderboard-table {
+  width: 90%;
+  max-width: 600px;
+  border-collapse: collapse;
+  background-color: rgba(255, 255, 255, 0.05);
+  border-radius: 12px;
+  overflow: hidden;
+  backdrop-filter: blur(10px);
+  margin-bottom: 2rem;
+}
+
+.leaderboard-table th,
+.leaderboard-table td {
+  padding: 1rem;
+  text-align: center;
+}
+
+.leaderboard-table th {
+  background-color: rgba(255, 255, 255, 0.1);
+  font-weight: bold;
+}
+
+.leaderboard-table tr:nth-child(even) {
+  background-color: rgba(255, 255, 255, 0.03);
+}

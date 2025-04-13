@@ -376,7 +376,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const leaderboard = JSON.parse(localStorage.getItem("quizLeaderboard")) || [];
     leaderboard.sort((a, b) => b.score - a.score);
 
-    const tbody = document.querySelector("#leaderboard tbody");
+    const tbody = document.querySelector(".leaderboard-table tbody");
     leaderboard.forEach((entry, index) => {
       const row = document.createElement("tr");
       row.innerHTML = `<td class="rank">${index + 1}</td><td>${entry.name}</td><td>${entry.score}</td>`;

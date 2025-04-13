@@ -5,97 +5,15 @@
   <title>Leaderboard</title>
   <link rel="stylesheet" href="style.css">
   <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700&display=swap" rel="stylesheet">
-  <style>
-    body {
-      font-family: 'Orbitron', sans-serif;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: flex-start;
-      min-height: 100vh;
-      padding: 2rem;
-    }
-
-    h1 {
-      font-size: 4rem;
-      margin-bottom: 2rem;
-      transition: color 0.3s ease;
-    }
-
-    [data-theme="dark"] h1 {
-      color: #ffffff;
-      text-shadow: 0 0 20px rgba(255, 255, 255, 0.7);
-    }
-
-    [data-theme="light"] h1 {
-      color: #3b0080;
-      text-shadow: none;
-    }
-
-    table {
-      width: 90%;
-      max-width: 600px;
-      border-collapse: collapse;
-      background-color: rgba(255, 255, 255, 0.05);
-      border-radius: 12px;
-      overflow: hidden;
-      backdrop-filter: blur(10px);
-      margin-bottom: 2rem;
-    }
-
-    th, td {
-      padding: 1rem;
-      text-align: center;
-    }
-
-    th {
-      background-color: rgba(255, 255, 255, 0.1);
-      font-weight: bold;
-    }
-
-    tr:nth-child(even) {
-      background-color: rgba(255, 255, 255, 0.03);
-    }
-
-    .theme-switch-wrapper {
-      position: absolute;
-      top: 20px;
-      right: 20px;
-    }
-
-    .home-btn {
-      background: purple;
-      padding: 12px 24px;
-      border: none;
-      border-radius: 8px;
-      font-size: 1rem;
-      font-weight: bold;
-      cursor: pointer;
-      transition: color 0.3s ease;
-    }
-
-    [data-theme="dark"] .home-btn {
-      color: white;
-    }
-
-    [data-theme="light"] .home-btn {
-      color: #fff;
-    }
-
-    .rank {
-      font-weight: bold;
-    }
-  </style>
 </head>
-<body>
-  <!-- Dark/Light Mode Switch -->
+<body class="leaderboard-body">
   <div class="theme-switch-wrapper">
-    <div class="theme-switch" id="themeSwitch" tabindex="0" role="switch">
+    <div class="theme-switch" tabindex="0" role="switch">
       <div class="switch-track">
         <div class="switch-thumb"></div>
       </div>
       <div class="switch-icons">
-        <svg class="sun-icon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <svg class="sun-icon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2">
           <circle cx="12" cy="12" r="5"></circle>
           <line x1="12" y1="1" x2="12" y2="3"></line>
           <line x1="12" y1="21" x2="12" y2="23"></line>
@@ -106,16 +24,16 @@
           <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
           <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
         </svg>
-        <svg class="moon-icon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <svg class="moon-icon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2">
           <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
         </svg>
       </div>
     </div>
   </div>
 
-  <h1>Leaderboard</h1>
+  <h1 class="leaderboard-title">Leaderboard</h1>
 
-  <table id="leaderboard">
+  <table class="leaderboard-table">
     <thead>
       <tr>
         <th>Rank</th>
@@ -126,9 +44,8 @@
     <tbody></tbody>
   </table>
 
-  <button class="home-btn" onclick="window.location.href='index.html'">Home</button>
+  <button class="home-button" onclick="window.location.href='index.html'">Home</button>
 
   <script src="script.js"></script>
-  </script>
 </body>
 </html>
