@@ -6,7 +6,6 @@ const app = express();
 
 const PORT = process.env.PORT || 3000;
 
-// Load questions from JSON file
 let questions = [];
 fs.readFile('questions.json', 'utf8', (err, data) => {
   if (err) {
@@ -15,7 +14,6 @@ fs.readFile('questions.json', 'utf8', (err, data) => {
   }
   questions = JSON.parse(data);
 
-  // Assign unique IDs if not present
   questions.forEach((q, idx) => {
     if (!q.id) q.id = `${idx}-${Math.floor(Math.random() * 10000)}`;
   });
@@ -24,12 +22,10 @@ fs.readFile('questions.json', 'utf8', (err, data) => {
 app.use(express.static(__dirname));
 app.use(bodyParser.json());
 
-// 🆕 Serve index.html from root
 app.get('/', (req, res) => {
   res.sendFile(path.join(__dirname, 'index.html'));
 });
 
-// ✅ Start quiz with optional count and used exclusion
 app.get('/api/start-quiz', (req, res) => {
   const count = parseInt(req.query.count) || 10;
   const usedIds = req.query.used ? req.query.used.split(',') : [];
@@ -41,7 +37,7 @@ app.get('/api/start-quiz', (req, res) => {
   res.json({ questions: selectedQuestions });
 });
 
-// ✅ Calculate score
+
 app.post('/api/submit-quiz', (req, res) => {
   const userAnswers = req.body.answers || [];
   const quizQuestions = req.body.questions || [];

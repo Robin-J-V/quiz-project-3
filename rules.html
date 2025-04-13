@@ -40,8 +40,14 @@
     <li>Only one option is correct.</li>
     <li>You can’t go back to previous questions.</li>
   </ul>
-  <label for="username">Enter your name:</label>
-  <input type="text" id="username" name="username" required>
+  <div class="input-container">
+    <input type="text" id="username" name="username" placeholder=" " required>
+    <label for="username">Enter your name</label>
+    <div class="input-glow"></div>
+  </div>
+  
+
+  <p id="error-message" class="error-message"></p>
 
   <button onclick="startQuiz()">BEGIN</button>
   <script src="script.js"></script>
