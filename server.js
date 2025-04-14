@@ -7,7 +7,7 @@ const app = express();
 const PORT = process.env.PORT || 3000;
 
 let questions = [];
-fs.readFile('/questions.json', 'utf8', (err, data) => {
+fs.readFile('questions.json', 'utf8', (err, data) => {
   if (err) {
     console.error('Error reading questions file:', err);
     return;
