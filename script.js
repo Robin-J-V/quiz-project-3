@@ -295,3 +295,61 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 });
+function login() {
+  const username = document.getElementById('username').value.trim();
+  const password = document.getElementById('password').value;
+
+  const savedUser = localStorage.getItem("quiz_username");
+  const savedPass = localStorage.getItem("quiz_password");
+
+  if (username === savedUser && password === savedPass) {
+    alert("Login successful!");
+    window.location.href = "rules.html";
+  } else {
+    alert("Invalid username or password.");
+  }
+}
+function signup() {
+  const firstName = document.getElementById('firstName').value.trim();
+  const lastName = document.getElementById('lastName').value.trim();
+  const username = document.getElementById('username').value.trim();
+  const password = document.getElementById('password').value;
+  const confirmPassword = document.getElementById('confirmPassword').value;
+
+  if (!firstName || !username || !password || !confirmPassword) {
+    alert("Please fill in all required fields.");
+    return;
+  }
+
+  if (password !== confirmPassword) {
+    alert("Passwords do not match.");
+    return;
+  }
+
+  // Store or send to MongoDB backend here
+  const userData = {
+    firstName,
+    lastName,
+    username,
+    password,
+  };
+
+  console.log("✅ Ready to store to MongoDB:", userData);
+
+  // Example: Send to API (commented out)
+  // fetch('/api/signup', {
+  //   method: 'POST',
+  //   headers: { 'Content-Type': 'application/json' },
+  //   body: JSON.stringify(userData)
+  // }).then(res => {
+  //   if (res.ok) {
+  //     alert("Signup successful!");
+  //     window.location.href = "index.html";
+  //   } else {
+  //     alert("Signup failed.");
+  //   }
+  // });
+
+  alert("Signup successful! Redirecting to login...");
+  window.location.href = "index.html";
+}

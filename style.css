@@ -380,3 +380,55 @@ button:hover {
 .leaderboard-table tr:nth-child(even) {
   background-color: rgba(255, 255, 255, 0.03);
 }
+body {
+  font-family: 'Orbitron', sans-serif;
+  text-align: center;
+  color: #f0f0f0;
+  background-color: #121212;
+}
+
+.login-box {
+  margin: 20px auto;
+  width: 300px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.login-box input {
+  padding: 10px;
+  font-size: 16px;
+  border-radius: 5px;
+  border: 1px solid #444;
+  background: #1e1e1e;
+  color: white;
+}
+
+.login-box button {
+  padding: 10px;
+  font-size: 16px;
+  background-color: #4CAF50;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.login-box button:hover {
+  background-color: #45a049;
+}
+
+.nav-buttons button {
+  margin: 10px;
+  padding: 10px 20px;
+  font-size: 16px;
+  background-color: #2196F3;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.nav-buttons button:hover {
+  background-color: #0b7dda;
+}
