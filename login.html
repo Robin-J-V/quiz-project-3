@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Login</title>
+  <link rel="stylesheet" href="style.css">
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700&display=swap" rel="stylesheet">
+</head>
+<body>
+  <div class="theme-switch-wrapper">
+    <div class="theme-switch" id="themeSwitch" tabindex="0" role="switch">
+      <div class="switch-track"><div class="switch-thumb"></div></div>
+      <div class="switch-icons">
+        <svg class="sun-icon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" stroke="currentColor"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/></svg>
+        <svg class="moon-icon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" stroke="currentColor"><path d="M21 12.79A9 9 0 1 1 11.21 3A7 7 0 0 0 21 12.79z"/></svg>
+      </div>
+    </div>
+  </div>
+
+  <h1>Login</h1>
+
+  <div class="input-container">
+    <input type="text" id="username" placeholder=" " required>
+    <label for="username">Username</label>
+    <div class="input-glow"></div>
+  </div>
+
+  <div class="input-container">
+    <input type="password" id="password" placeholder=" " required>
+    <label for="password">Password</label>
+    <div class="input-glow"></div>
+  </div>
+
+  <button onclick="login()">Login</button>
+  <p>Don’t have an account? <a href="signup.html">Sign up</a></p>
+
+  <script src="script.js"></script>
+</body>
+</html>
