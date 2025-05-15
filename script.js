@@ -1,3 +1,4 @@
+
 let questions = [];
 let currentIndex = 0;
 const maxQuestions = 10;
@@ -8,20 +9,34 @@ let timeLeft = 10;
 document.addEventListener('DOMContentLoaded', () => {
   const themeSwitch = document.querySelector('.theme-switch');
   const html = document.documentElement;
-  
+
   initializeTheme();
-  
+
   if (themeSwitch) {
     themeSwitch.addEventListener('click', toggleTheme);
     setupKeyboardAccessibility(themeSwitch);
     updateToggleVisualState(html.getAttribute('data-theme'));
-  } else {
-    console.warn('Theme switch element not found on this page');
   }
   observeThemeChanges();
 
   if (document.querySelector('.question-text')) {
     loadQuestion();
+  }
+
+  if (document.getElementById('revealBtn')) {
+    document.getElementById('revealBtn').addEventListener('click', revealScore);
+  }
+
+  if (window.location.pathname.includes('leaderboard.html')) {
+    const leaderboard = JSON.parse(localStorage.getItem("quizLeaderboard")) || [];
+    leaderboard.sort((a, b) => b.score - a.score);
+
+    const tbody = document.querySelector(".leaderboard-table tbody");
+    leaderboard.forEach((entry, index) => {
+      const row = document.createElement("tr");
+      row.innerHTML = `<td class="rank">${index + 1}</td><td>${entry.name}</td><td>${entry.score}</td>`;
+      tbody.appendChild(row);
+    });
   }
 });
 
@@ -29,10 +44,9 @@ function initializeTheme() {
   const html = document.documentElement;
   const themeSwitch = document.querySelector('.theme-switch');
   const savedTheme = localStorage.getItem('theme') || 'dark';
-  
+
   html.setAttribute('data-theme', savedTheme);
-  console.log(`Theme initialized to: ${savedTheme}`);
-  
+
   if (themeSwitch) {
     themeSwitch.setAttribute('aria-checked', savedTheme === 'light' ? 'true' : 'false');
   }
@@ -46,35 +60,27 @@ function toggleTheme() {
   html.setAttribute('data-theme', newTheme);
   localStorage.setItem('theme', newTheme);
   updateToggleVisualState(newTheme);
-  
+
   if (themeSwitch) {
     themeSwitch.setAttribute('aria-checked', newTheme === 'light' ? 'true' : 'false');
   }
-  
-  document.body.style.transition = 'background-image 0.5s ease, color 0.3s ease';
-  
-  applyThemeSpecificEffects();
 
+  document.body.style.transition = 'background-image 0.5s ease, color 0.3s ease';
+  applyThemeSpecificEffects();
   playToggleSound();
-  
-  console.log(`Theme changed to: ${newTheme}`);
 }
 
 function updateToggleVisualState(theme) {
   const switchThumb = document.querySelector('.switch-thumb');
   if (switchThumb) {
-    if (theme === 'light') {
-      switchThumb.style.transform = 'translateX(40px)';
-    } else {
-      switchThumb.style.transform = 'translateX(0)';
-    }
+    switchThumb.style.transform = theme === 'light' ? 'translateX(40px)' : 'translateX(0)';
   }
 }
 
 function setupKeyboardAccessibility(element) {
   element.setAttribute('tabindex', '0');
   element.setAttribute('role', 'switch');
-  
+
   element.addEventListener('keydown', (e) => {
     if (e.key === 'Enter' || e.key === ' ') {
       e.preventDefault();
@@ -96,13 +102,11 @@ function observeThemeChanges() {
     mutations.forEach((mutation) => {
       if (mutation.attributeName === 'data-theme') {
         const currentTheme = document.documentElement.getAttribute('data-theme');
-        console.log(`Theme change detected by observer: ${currentTheme}`);
         updateToggleVisualState(currentTheme);
         applyThemeSpecificEffects();
       }
     });
   });
-  
   observer.observe(document.documentElement, { attributes: true });
 }
 
@@ -120,13 +124,9 @@ async function loadQuestion() {
   if (questions.length === 0) {
     try {
       const response = await fetch('/api/start-quiz');
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
-      }
       const data = await response.json();
       questions = data.questions;
     } catch (error) {
-      console.error('Error loading questions:', error);
       questions = getSampleQuestions();
     }
   }
@@ -199,7 +199,6 @@ function checkAnswer(selected, correct, clickedButton) {
 
   allButtons.forEach(btn => {
     btn.disabled = true;
-
     if (btn.dataset.letter === correct) {
       btn.classList.add('correct');
     } else if (btn === clickedButton && selected !== correct) {
@@ -225,7 +224,6 @@ function endQuiz() {
 
 function startQuiz() {
   const username = document.getElementById("username").value.trim();
-  const errorMessage = document.getElementById('error-message');
   if (!username) {
     alert("Please enter your name before starting the quiz.");
     return;
@@ -242,20 +240,10 @@ function saveScore(score) {
   localStorage.setItem("quizLeaderboard", JSON.stringify(leaderboard));
 }
 
-function saveScore(score) {
-  const name = localStorage.getItem("quizUsername") || "Anonymous";
-  const leaderboard = JSON.parse(localStorage.getItem("quizLeaderboard")) || [];
-
-  leaderboard.push({ name, score });
-  localStorage.setItem("quizLeaderboard", JSON.stringify(leaderboard));
-}
-
 function playResultSound(score) {
   const audio = new Audio(score >= 6 ? 'success.mp3' : 'fail.mp3');
   audio.volume = 0.8;
-  audio.play().catch((err) => {
-    console.warn("Audio playback blocked:", err);
-  });
+  audio.play().catch(() => {});
 }
 
 function revealScore() {
@@ -271,44 +259,30 @@ function revealScore() {
   resultEl.innerText = `Your score is: ${score} / 10`;
   playResultSound(score);
   document.getElementById('revealBtn').style.display = 'none';
-  
   document.querySelector('.button-group').style.display = 'flex';
-
   localStorage.removeItem('quizScore');
 }
 
-
-document.addEventListener('DOMContentLoaded', () => {
-  if (document.getElementById('revealBtn')) {
-    document.getElementById('revealBtn').addEventListener('click', revealScore);
-  }
-
-  if (window.location.pathname.includes('leaderboard.html')) {
-    const leaderboard = JSON.parse(localStorage.getItem("quizLeaderboard")) || [];
-    leaderboard.sort((a, b) => b.score - a.score);
-
-    const tbody = document.querySelector(".leaderboard-table tbody");
-    leaderboard.forEach((entry, index) => {
-      const row = document.createElement("tr");
-      row.innerHTML = `<td class="rank">${index + 1}</td><td>${entry.name}</td><td>${entry.score}</td>`;
-      tbody.appendChild(row);
-    });
-  }
-});
 function login() {
   const username = document.getElementById('username').value.trim();
   const password = document.getElementById('password').value;
 
-  const savedUser = localStorage.getItem("quiz_username");
-  const savedPass = localStorage.getItem("quiz_password");
-
-  if (username === savedUser && password === savedPass) {
-    alert("Login successful!");
-    window.location.href = "rules.html";
-  } else {
-    alert("Invalid username or password.");
-  }
+  fetch('/signin', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ username, password })
+  })
+  .then(res => res.json())
+  .then(data => {
+    if (data.success) {
+      localStorage.setItem("quizUsername", username);
+      window.location.href = "rules.html";
+    } else {
+      alert(data.message);
+    }
+  });
 }
+
 function signup() {
   const firstName = document.getElementById('firstName').value.trim();
   const lastName = document.getElementById('lastName').value.trim();
@@ -326,30 +300,18 @@ function signup() {
     return;
   }
 
-  // Store or send to MongoDB backend here
-  const userData = {
-    firstName,
-    lastName,
-    username,
-    password,
-  };
+  const data = { firstName, lastName, username, password };
 
-  console.log("✅ Ready to store to MongoDB:", userData);
-
-  // Example: Send to API (commented out)
-  // fetch('/api/signup', {
-  //   method: 'POST',
-  //   headers: { 'Content-Type': 'application/json' },
-  //   body: JSON.stringify(userData)
-  // }).then(res => {
-  //   if (res.ok) {
-  //     alert("Signup successful!");
-  //     window.location.href = "index.html";
-  //   } else {
-  //     alert("Signup failed.");
-  //   }
-  // });
-
-  alert("Signup successful! Redirecting to login...");
-  window.location.href = "index.html";
+  fetch('/api/signup', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(data)
+  })
+  .then(res => res.json())
+  .then(response => {
+    alert(response.message);
+    if (response.success) {
+      window.location.href = "index.html";
+    }
+  });
 }
