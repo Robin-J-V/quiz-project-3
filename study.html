@@ -8,6 +8,18 @@
   <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700&display=swap" rel="stylesheet" />
 </head>
 <body>
+  <div id="menuToggle" class="hamburger" onclick="toggleSidebar()" style="display: none;">
+    &#9776;
+  </div>
+  
+  <div id="sidebar" class="sidebar" style="display: none;">
+    <div class="sidebar-top">
+      <button onclick="location.href='profile.html'">Profile</button>
+    </div>
+    <div class="sidebar-bottom">
+      <button onclick="logout()">Sign Out</button>
+    </div>
+  </div>
   <div class="theme-switch-wrapper">
     <div class="theme-switch" id="themeSwitch" tabindex="0" role="switch">
       <div class="switch-track">

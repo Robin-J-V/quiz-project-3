@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>User Profile</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+<div id="menuToggle" class="hamburger" onclick="toggleSidebar()" style="display: none;">
+    &#9776;
+  </div>
+  
+  <div id="sidebar" class="sidebar" style="display: none;">
+    <div class="sidebar-top">
+      <button onclick="location.href='profile.html'">Profile</button>
+    </div>
+    <div class="sidebar-bottom">
+      <button onclick="logout()">Sign Out</button>
+    </div>
+  </div>
+  
+  
+  <h1>User Profile</h1>
+  <div id="profileContent"></div>
+  <button onclick="location.href='index.html'">Back to Home</button>
+
+  <script>
+    const user = localStorage.getItem("loggedInUser");
+    if (!user) {
+      alert("You must log in first.");
+      window.location.href = "index.html";
+    } else {
+      document.getElementById("profileContent").innerHTML = `
+        <p><strong>Username:</strong> ${user}</p>
+        <p><strong>Joined:</strong> Today (dummy data)</p>
+        <p><strong>Quizzes Taken:</strong> 0 (add real data later)</p>
+      `;
+    }
+  </script>
+</body>
+</html>

@@ -432,3 +432,70 @@ body {
 .nav-buttons button:hover {
   background-color: #0b7dda;
 }
+
+/* Hamburger Icon */
+.hamburger {
+  font-size: 28px;
+  cursor: pointer;
+  color: white;
+  position: fixed;
+  top: 20px;
+  left: 20px;
+  z-index: 1001;
+}
+
+/* Sidebar */
+.sidebar {
+  position: fixed;
+  top: 0;
+  left: -200px;
+  width: 180px;
+  height: 100vh;
+  background: rgba(0, 0, 0, 0.5);
+  padding: 20px 10px;
+  transition: left 0.3s ease;
+  z-index: 1000;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+/* When active, slide it in */
+.sidebar.active {
+  left: 0;
+}
+
+.sidebar-top,
+.sidebar-bottom {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.sidebar button {
+  background: #222;
+  border: none;
+  color: white;
+  padding: 10px;
+  font-size: 14px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background 0.3s ease;
+}
+
+.sidebar button:hover {
+  background: #00eaff;
+  color: black;
+}
+/* Blur/Dark overlay */
+.overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  backdrop-filter: blur(4px);
+  background: rgba(0, 0, 0, 0.4);
+  z-index: 999;
+  display: none;
+}

@@ -8,6 +8,18 @@
   <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700&display=swap" rel="stylesheet">
 </head>
 <body>
+  <div id="menuToggle" class="hamburger" onclick="toggleSidebar()" style="display: none;">
+    &#9776;
+  </div>
+  
+  <div id="sidebar" class="sidebar" style="display: none;">
+    <div class="sidebar-top">
+      <button onclick="location.href='profile.html'">Profile</button>
+    </div>
+    <div class="sidebar-bottom">
+      <button onclick="logout()">Sign Out</button>
+    </div>
+  </div>
   <div class="theme-switch-wrapper">
     <div class="theme-switch" id="themeSwitch" tabindex="0" role="switch">
       <div class="switch-track">
@@ -40,11 +52,13 @@
     <li>Only one option is correct.</li>
     <li>You can’t go back to previous questions.</li>
   </ul>
+ <!-- 
   <div class="input-container">
     <input type="text" id="username" name="username" placeholder=" " required>
     <label for="username">Enter your name</label>
     <div class="input-glow"></div>
   </div>
+-->
   
 
   <p id="error-message" class="error-message"></p>

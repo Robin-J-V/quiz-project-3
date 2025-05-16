@@ -223,14 +223,13 @@ function endQuiz() {
 }
 
 function startQuiz() {
-  const username = document.getElementById("username").value.trim();
-  if (!username) {
-    alert("Please enter your name before starting the quiz.");
-    return;
-  }
+  const username = localStorage.getItem("loggedInUser");
+
   localStorage.setItem("quizUsername", username);
+
   location.href = "quiz.html";
 }
+
 
 function saveScore(score) {
   const name = localStorage.getItem("quizUsername") || "Anonymous";
@@ -264,24 +263,68 @@ function revealScore() {
 }
 
 function login() {
-  const username = document.getElementById('username').value.trim();
-  const password = document.getElementById('password').value;
+  const username = document.getElementById("username").value.trim();
+  const password = document.getElementById("password").value;
 
-  fetch('/signin', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ username, password })
-  })
-  .then(res => res.json())
-  .then(data => {
-    if (data.success) {
-      localStorage.setItem("quizUsername", username);
-      window.location.href = "rules.html";
-    } else {
-      alert(data.message);
-    }
-  });
+  const validUser = "user";
+  const validPass = "pass";
+
+  if (username === validUser && password === validPass) {
+    localStorage.setItem("loggedInUser", username);
+    window.location.href = "home.html";
+  } else {
+    alert("Invalid credentials");
+  }
 }
+
+
+function logout() {
+  localStorage.removeItem("loggedInUser");
+  window.location.href = "index.html"; // back to login page
+}
+
+function checkLoginStatus() {
+  const user = localStorage.getItem("loggedInUser");
+  if (user) {
+    showMainContent(user);
+  }
+}
+
+
+function showMainContent(username) {
+  document.getElementById("loginSection").style.display = "none";
+  document.getElementById("mainContent").style.display = "block";
+  document.getElementById("menuToggle").style.display = "block";
+  document.getElementById("sidebar").style.display = "flex";
+  document.getElementById("welcomeMessage").textContent = `Welcome, ${username}!`;
+}
+
+function showDashboard(username) {
+  document.getElementById('navButtons').style.display = 'block';
+  document.querySelectorAll('.input-container').forEach(el => el.style.display = 'none');
+  document.querySelector('button[onclick="login()"]').style.display = 'none';
+  document.querySelector('p').style.display = 'none';
+  document.querySelector('h1').textContent = `Welcome, ${username}!`;
+  document.body.classList.add("logged-in");
+
+
+  // Show sidebar instead of top buttons
+  const sidebar = document.getElementById('sidebar');
+  if (sidebar) sidebar.style.display = 'flex';
+}
+function toggleSidebar() {
+  const sidebar = document.getElementById("sidebar");
+  const overlay = document.getElementById("overlay");
+  sidebar.classList.toggle("active");
+  overlay.style.display = sidebar.classList.contains("active") ? "block" : "none";
+}
+
+
+
+window.addEventListener('DOMContentLoaded', checkLoginStatus);
+
+
+
 
 function signup() {
   const firstName = document.getElementById('firstName').value.trim();
