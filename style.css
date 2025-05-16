@@ -330,6 +330,10 @@ button:hover {
   outline-offset: 2px;
 }
 
+[data-theme="light"] .questions {
+  color: #333
+}
+
 .leaderboard-body {
   display: flex;
   flex-direction: column;

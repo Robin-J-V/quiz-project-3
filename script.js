@@ -160,7 +160,7 @@ function displayQuestion() {
 }
 
 function startTimer() {
-  timeLeft = 10;
+  timeLeft = 30;
   updateTimerDisplay();
 
   timer = setInterval(() => {
@@ -311,7 +311,7 @@ function signup() {
   .then(response => {
     alert(response.message);
     if (response.success) {
-      window.location.href = "index.html";
+      window.location.href = "login.html";
     }
   });
 }
