@@ -1,14 +1,15 @@
-
 let questions = [];
 let currentIndex = 0;
 const maxQuestions = 10;
 let score = 0;
 let timer;
-let timeLeft = 10;
+let timeLeft = 30;
 
 document.addEventListener('DOMContentLoaded', () => {
   const themeSwitch = document.querySelector('.theme-switch');
   const html = document.documentElement;
+  const nav = document.getElementById('navButtons');
+  const heading = document.getElementById('welcomeHeading');
 
   initializeTheme();
 
@@ -17,7 +18,18 @@ document.addEventListener('DOMContentLoaded', () => {
     setupKeyboardAccessibility(themeSwitch);
     updateToggleVisualState(html.getAttribute('data-theme'));
   }
+
   observeThemeChanges();
+
+  if (window.location.pathname.includes('index.html')) {
+    const user = localStorage.getItem('quizUsername');
+    if (user) {
+      if (nav) nav.style.display = 'block';
+      if (heading) heading.textContent = `Welcome, ${user}`;
+    } else {
+      window.location.href = 'login.html';
+    }
+  }
 
   if (document.querySelector('.question-text')) {
     loadQuestion();
@@ -44,12 +56,8 @@ function initializeTheme() {
   const html = document.documentElement;
   const themeSwitch = document.querySelector('.theme-switch');
   const savedTheme = localStorage.getItem('theme') || 'dark';
-
   html.setAttribute('data-theme', savedTheme);
-
-  if (themeSwitch) {
-    themeSwitch.setAttribute('aria-checked', savedTheme === 'light' ? 'true' : 'false');
-  }
+  if (themeSwitch) themeSwitch.setAttribute('aria-checked', savedTheme === 'light' ? 'true' : 'false');
 }
 
 function toggleTheme() {
@@ -60,11 +68,7 @@ function toggleTheme() {
   html.setAttribute('data-theme', newTheme);
   localStorage.setItem('theme', newTheme);
   updateToggleVisualState(newTheme);
-
-  if (themeSwitch) {
-    themeSwitch.setAttribute('aria-checked', newTheme === 'light' ? 'true' : 'false');
-  }
-
+  if (themeSwitch) themeSwitch.setAttribute('aria-checked', newTheme === 'light' ? 'true' : 'false');
   document.body.style.transition = 'background-image 0.5s ease, color 0.3s ease';
   applyThemeSpecificEffects();
   playToggleSound();
@@ -72,15 +76,12 @@ function toggleTheme() {
 
 function updateToggleVisualState(theme) {
   const switchThumb = document.querySelector('.switch-thumb');
-  if (switchThumb) {
-    switchThumb.style.transform = theme === 'light' ? 'translateX(40px)' : 'translateX(0)';
-  }
+  if (switchThumb) switchThumb.style.transform = theme === 'light' ? 'translateX(40px)' : 'translateX(0)';
 }
 
 function setupKeyboardAccessibility(element) {
   element.setAttribute('tabindex', '0');
   element.setAttribute('role', 'switch');
-
   element.addEventListener('keydown', (e) => {
     if (e.key === 'Enter' || e.key === ' ') {
       e.preventDefault();
@@ -111,7 +112,6 @@ function observeThemeChanges() {
 }
 
 function applyThemeSpecificEffects() {
-  const currentTheme = document.documentElement.getAttribute('data-theme');
   document.body.classList.add('theme-transition');
   setTimeout(() => {
     document.body.classList.remove('theme-transition');
@@ -120,22 +120,25 @@ function applyThemeSpecificEffects() {
 
 async function loadQuestion() {
   clearInterval(timer);
-
   if (questions.length === 0) {
     try {
       const response = await fetch('/api/start-quiz');
       const data = await response.json();
+      if (!data.questions || !Array.isArray(data.questions)) {
+        alert("Invalid question format from API");
+        return;
+      }
       questions = data.questions;
     } catch (error) {
-      questions = getSampleQuestions();
+      console.error("Error loading questions:", error);
+      alert("Could not load quiz questions. Try again later.");
+      return;
     }
   }
-
   if (currentIndex >= maxQuestions || currentIndex >= questions.length) {
     endQuiz();
     return;
   }
-
   displayQuestion();
   startTimer();
 }
@@ -144,10 +147,8 @@ function displayQuestion() {
   const question = questions[currentIndex];
   document.querySelector('.question-number').textContent = `Question ${currentIndex + 1}`;
   document.querySelector('.question-text').textContent = question.question;
-
   const answersDiv = document.querySelector('.answers');
   answersDiv.innerHTML = '';
-
   const options = ['A', 'B', 'C', 'D'];
   options.forEach(letter => {
     const button = document.createElement('button');
@@ -162,7 +163,6 @@ function displayQuestion() {
 function startTimer() {
   timeLeft = 30;
   updateTimerDisplay();
-
   timer = setInterval(() => {
     timeLeft--;
     updateTimerDisplay();
@@ -180,36 +180,22 @@ function updateTimerDisplay() {
   const timerElement = document.querySelector('.timer');
   if (timerElement) {
     timerElement.textContent = `Time left: ${timeLeft}`;
-    if (timeLeft <= 3) {
-      timerElement.classList.add('time-low');
-    } else {
-      timerElement.classList.remove('time-low');
-    }
+    timerElement.classList.toggle('time-low', timeLeft <= 3);
   }
 }
 
 function disableButtons() {
-  const allButtons = document.querySelectorAll('.answer-button');
-  allButtons.forEach(btn => btn.disabled = true);
+  document.querySelectorAll('.answer-button').forEach(btn => btn.disabled = true);
 }
 
 function checkAnswer(selected, correct, clickedButton) {
   clearInterval(timer);
-  const allButtons = document.querySelectorAll('.answer-button');
-
-  allButtons.forEach(btn => {
+  document.querySelectorAll('.answer-button').forEach(btn => {
     btn.disabled = true;
-    if (btn.dataset.letter === correct) {
-      btn.classList.add('correct');
-    } else if (btn === clickedButton && selected !== correct) {
-      btn.classList.add('incorrect');
-    }
+    if (btn.dataset.letter === correct) btn.classList.add('correct');
+    else if (btn === clickedButton && selected !== correct) btn.classList.add('incorrect');
   });
-
-  if (selected === correct) {
-    score++;
-  }
-
+  if (selected === correct) score++;
   setTimeout(() => {
     currentIndex++;
     loadQuestion();
@@ -218,23 +204,19 @@ function checkAnswer(selected, correct, clickedButton) {
 
 function endQuiz() {
   localStorage.setItem('quizScore', score);
-  saveScore(score); 
-  window.location.href = `/results.html`; 
+  saveScore(score);
+  window.location.href = `/results.html`;
 }
 
 function startQuiz() {
   const username = localStorage.getItem("loggedInUser");
-
   localStorage.setItem("quizUsername", username);
-
   location.href = "quiz.html";
 }
-
 
 function saveScore(score) {
   const name = localStorage.getItem("quizUsername") || "Anonymous";
   const leaderboard = JSON.parse(localStorage.getItem("quizLeaderboard")) || [];
-
   leaderboard.push({ name, score });
   localStorage.setItem("quizLeaderboard", JSON.stringify(leaderboard));
 }
@@ -248,12 +230,10 @@ function playResultSound(score) {
 function revealScore() {
   const storedScore = localStorage.getItem('quizScore');
   const resultEl = document.querySelector('.result-message');
-
   if (!storedScore) {
     resultEl.innerText = 'No score found.';
     return;
   }
-
   score = parseInt(storedScore);
   resultEl.innerText = `Your score is: ${score} / 10`;
   playResultSound(score);
@@ -265,10 +245,8 @@ function revealScore() {
 function login() {
   const username = document.getElementById("username").value.trim();
   const password = document.getElementById("password").value;
-
   const validUser = "user";
   const validPass = "pass";
-
   if (username === validUser && password === validPass) {
     localStorage.setItem("loggedInUser", username);
     window.location.href = "home.html";
@@ -277,19 +255,15 @@ function login() {
   }
 }
 
-
 function logout() {
   localStorage.removeItem("loggedInUser");
-  window.location.href = "index.html"; // back to login page
+  window.location.href = "index.html";
 }
 
 function checkLoginStatus() {
   const user = localStorage.getItem("loggedInUser");
-  if (user) {
-    showMainContent(user);
-  }
+  if (user) showMainContent(user);
 }
-
 
 function showMainContent(username) {
   document.getElementById("loginSection").style.display = "none";
@@ -306,12 +280,10 @@ function showDashboard(username) {
   document.querySelector('p').style.display = 'none';
   document.querySelector('h1').textContent = `Welcome, ${username}!`;
   document.body.classList.add("logged-in");
-
-
-  // Show sidebar instead of top buttons
   const sidebar = document.getElementById('sidebar');
   if (sidebar) sidebar.style.display = 'flex';
 }
+
 function toggleSidebar() {
   const sidebar = document.getElementById("sidebar");
   const overlay = document.getElementById("overlay");
@@ -319,12 +291,7 @@ function toggleSidebar() {
   overlay.style.display = sidebar.classList.contains("active") ? "block" : "none";
 }
 
-
-
 window.addEventListener('DOMContentLoaded', checkLoginStatus);
-
-
-
 
 function signup() {
   const firstName = document.getElementById('firstName').value.trim();
