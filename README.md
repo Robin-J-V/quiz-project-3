@@ -13,17 +13,15 @@ Theme Toggle: Dark/Light mode with animation and persistence.
 Responsive Design: Mobile-friendly layout and styles.
 
 Running the App
+
+Visit: https://quiz-project-3.onrender.com
+
+To run locally:
 Open your terminal and navigate to the project folder.
-
 install the dependencies:
--npm install
 npm install node-fetch@2
-
 npm install dotenv
 npm install mongodb
-npm install bcrypt
-
-
 
 start the server:
 
