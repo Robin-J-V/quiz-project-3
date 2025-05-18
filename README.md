@@ -1,13 +1,13 @@
-# Quiz-Project
+# Quiz-Project 3
 
 Quiz-Project
 Features
-Multi-Page App: Home, Rules, Quiz, Results, Leaderboard, and Study pages.
-Randomized Quiz: 10 random questions per game from server.
-Timer: 10-second countdown per question with auto-advance.
+Multi-Page App: Home, Rules, Quiz, Results, Leaderboard, and Study pages, Player Profile with play history
+Randomized Quiz: 10 random questions per game from Triva API.
+Timer: 30-second countdown per question with auto-advance.
 Answer Feedback: Visual indicators for correct/incorrect answers.
 Score Tracking: Real-time scoring and result reveal with sound.
-Leaderboard: Local leaderboard sorted by high score.
+Leaderboard: Top 10 Leaderboard connected to mongodb shows top 10 players and their scores
 Study Mode: Scrollable list of 500+ trivia questions and answers.
 Theme Toggle: Dark/Light mode with animation and persistence.
 Responsive Design: Mobile-friendly layout and styles.
@@ -36,24 +36,21 @@ then enter http://localhost:3000/ in your browser
 Group Member Responsibilities
 
 Farhan Azad:
--desigend canva mock up for ui
--created study page page
--created css design 
--created scripts
--refactored server.js and script.js
--implemented the dark/light mode switches
+-updated colors
+-rerouted html files
+-increased question timer
 
 
 Robin Verma:
--helped design ui mockup
--created initial style.css based on canva mockup
--created initial server.js
--created timer
--created scripts
--merged scripts and css for organization
+-created user account for mongo db and connected data base to project
+-connected leaderboard to mongo db which keeps track of top 10 players and their scores
+-connected user profile to mongo db so that player history is recorded and leaderboard has real player information
+-made it so user profile keeps track of player average score, quizes taken, highest score, the date quizes were taken/score history. all is saveda to and retrived from mongodb
+-connected quiz trivia API
+-created capactiy for real users to sign up, to login and log out with user information/log in information being saved in and retrieved from mongodb. 
+
 
 
 Sarmad Ali:
--created scripts for sound effects for quiz results
--created leaderboard
--created scripts for results
+-creted login and sign up html pages
+-created side bar for profile and sign out buttons and loading home page
