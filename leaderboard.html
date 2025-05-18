@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" data-theme="dark">
+<html lang="en" data-theme="light">
 <head>
   <meta charset="UTF-8">
   <title>Leaderboard</title>
@@ -7,18 +7,19 @@
   <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700&display=swap" rel="stylesheet">
 </head>
 <body class="leaderboard-body">
-  <div id="menuToggle" class="hamburger" onclick="toggleSidebar()" style="display: none;">
+  <div id="menuToggle" class="hamburger" onclick="toggleSidebar()">
     &#9776;
   </div>
-  
-  <div id="sidebar" class="sidebar" style="display: none;">
+
+  <div id="sidebar" class="sidebar">
     <div class="sidebar-top">
-      <button onclick="location.href='profile.html'">Profile</button>
+      <button onclick="location.href='profile.html'">👤 Profile</button>
     </div>
     <div class="sidebar-bottom">
-      <button onclick="logout()">Sign Out</button>
+      <button onclick="logout()">🔓 Sign Out</button>
     </div>
   </div>
+
   <div class="theme-switch-wrapper">
     <div class="theme-switch" id="themeSwitch" tabindex="0" role="switch">
       <div class="switch-track">
@@ -42,6 +43,7 @@
       </div>
     </div>
   </div>
+
   <h1 class="leaderboard-title">Leaderboard</h1>
 
   <table class="leaderboard-table">
@@ -52,11 +54,32 @@
         <th>Score</th>
       </tr>
     </thead>
-    <tbody></tbody>
+    <tbody id="leaderboardBody">
+    </tbody>
   </table>
 
-  <button class="home-button" onclick="window.location.href='index.html'">Home</button>
+  <button class="home-button" onclick="window.location.href='home.html'">Home</button>
 
   <script src="script.js"></script>
+  <script>
+    window.addEventListener("DOMContentLoaded", async () => {
+      try {
+        const res = await fetch("/api/leaderboard");
+        const data = await res.json();
+        const tbody = document.getElementById("leaderboardBody");
+        data.forEach((entry, index) => {
+          const tr = document.createElement("tr");
+          tr.innerHTML = `
+            <td>${index + 1}</td>
+            <td>${entry.username}</td>
+            <td>${entry.score}</td>
+          `;
+          tbody.appendChild(tr);
+        });
+      } catch (err) {
+        console.error("Failed to load leaderboard:", err);
+      }
+    });
+  </script>
 </body>
 </html>

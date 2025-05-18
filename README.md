@@ -17,6 +17,13 @@ Open your terminal and navigate to the project folder.
 
 install the dependencies:
 -npm install
+npm install node-fetch@2
+
+npm install dotenv
+npm install mongodb
+npm install bcrypt
+
+
 
 start the server:
 

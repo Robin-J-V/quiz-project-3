@@ -491,7 +491,6 @@ body {
   background: #00eaff;
   color: black;
 }
-/* Blur/Dark overlay */
 .overlay {
   position: fixed;
   top: 0;
@@ -502,4 +501,29 @@ body {
   background: rgba(0, 0, 0, 0.4);
   z-index: 999;
   display: none;
+}
+
+.message-box {
+  position: fixed;
+  top: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: var(--button-gradient);
+  color: var(--text-color);
+  padding: 16px 24px;
+  border-radius: 12px;
+  font-family: 'Orbitron', sans-serif;
+  font-size: 18px;
+  font-weight: bold;
+  box-shadow: var(--button-shadow);
+  z-index: 1000;
+  text-align: center;
+  animation: fadeinout 4s ease-in-out;
+}
+
+@keyframes fadeinout {
+  0% { opacity: 0; top: 0; }
+  10% { opacity: 1; top: 20px; }
+  90% { opacity: 1; top: 20px; }
+  100% { opacity: 0; top: 0; }
 }

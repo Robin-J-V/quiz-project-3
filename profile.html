@@ -5,14 +5,15 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>User Profile</title>
   <link rel="stylesheet" href="style.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700&display=swap" rel="stylesheet">
 </head>
-<body>
+<body class="leaderboard-body">
 
-<div id="menuToggle" class="hamburger" onclick="toggleSidebar()" style="display: none;">
+  <div id="menuToggle" class="hamburger" onclick="toggleSidebar()">
     &#9776;
   </div>
-  
-  <div id="sidebar" class="sidebar" style="display: none;">
+
+  <div id="sidebar" class="sidebar">
     <div class="sidebar-top">
       <button onclick="location.href='profile.html'">Profile</button>
     </div>
@@ -20,24 +21,87 @@
       <button onclick="logout()">Sign Out</button>
     </div>
   </div>
-  
-  
-  <h1>User Profile</h1>
-  <div id="profileContent"></div>
-  <button onclick="location.href='index.html'">Back to Home</button>
 
+  <div class="theme-switch-wrapper">
+    <div class="theme-switch" id="themeSwitch" tabindex="0" role="switch">
+      <div class="switch-track">
+        <div class="switch-thumb"></div>
+      </div>
+      <div class="switch-icons">
+        <svg class="sun-icon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="5"></circle>
+          <line x1="12" y1="1" x2="12" y2="3"></line>
+          <line x1="12" y1="21" x2="12" y2="23"></line>
+          <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+          <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+          <line x1="1" y1="12" x2="3" y2="12"></line>
+          <line x1="21" y1="12" x2="23" y2="12"></line>
+          <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+          <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+        </svg>
+        <svg class="moon-icon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+        </svg>
+      </div>
+    </div>
+  </div>
+
+  <h1 class="leaderboard-title">User Profile</h1>
+
+  <div id="profileContent" class="quiz-inner" style="max-width: 600px; text-align: left;"></div>
+
+  <div class="button-group">
+    <button onclick="location.href='Home.html'">Back to Home</button>
+  </div>
+
+  <script src="script.js"></script>
   <script>
-    const user = localStorage.getItem("loggedInUser");
-    if (!user) {
+    const username = localStorage.getItem("loggedInUser");
+    if (!username) {
       alert("You must log in first.");
       window.location.href = "index.html";
     } else {
-      document.getElementById("profileContent").innerHTML = `
-        <p><strong>Username:</strong> ${user}</p>
-        <p><strong>Joined:</strong> Today (dummy data)</p>
-        <p><strong>Quizzes Taken:</strong> 0 (add real data later)</p>
-      `;
+      fetch(`/api/user-profile?username=${username}`)
+        .then(res => res.json())
+        .then(data => {
+          if (!data.success) throw new Error(data.message);
+          const { user, scores } = data;
+
+          const total = scores.reduce((sum, s) => sum + s.score, 0);
+          const highest = scores.reduce((max, s) => s.score > max ? s.score : max, 0);
+          const average = scores.length > 0 ? (total / scores.length).toFixed(2) : "N/A";
+
+          const profileHTML = `
+            <ul>
+              <li><strong>Username:</strong> ${user.username}</li>
+              <li><strong>Quizzes Taken:</strong> ${scores.length}</li>
+              <li><strong>Average Score:</strong> ${average}</li>
+              <li><strong>Highest Score:</strong> ${highest}</li>
+            </ul>
+            <h2>Score History</h2>
+            <ul>
+              ${scores.length === 0
+                ? '<li>No quiz history yet.</li>'
+                : scores.map(s => {
+                    const date = new Date(s.date);
+                    const formattedDate = date.toLocaleDateString(undefined, {
+                      year: 'numeric',
+                      month: 'short',
+                      day: 'numeric'
+                    });
+                    return `<li>${formattedDate}: <strong>${s.score}</strong> / 10</li>`;
+                  }).join('')}
+            </ul>
+          `;
+
+          document.getElementById("profileContent").innerHTML = profileHTML;
+        })
+        .catch(err => {
+          console.error(err);
+          document.getElementById("profileContent").innerHTML = `<p>Error loading profile data.</p>`;
+        });
     }
   </script>
+  
 </body>
 </html>

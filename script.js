@@ -1,3 +1,24 @@
+document.addEventListener('DOMContentLoaded', () => {
+  const restrictedPages = [
+    'home.html',
+    'quiz.html',
+    'results.html',
+    'profile.html',
+    'leaderboard.html',
+    'study.html',
+    'rules.html'
+  ];
+
+  const currentPage = window.location.pathname.split('/').pop();
+  const user = localStorage.getItem("loggedInUser");
+
+  if (restrictedPages.includes(currentPage) && !user) {
+    alert("Please log in first.");
+    window.location.href = "login.html";
+  }
+});
+
+
 let questions = [];
 let currentIndex = 0;
 const maxQuestions = 10;
@@ -51,6 +72,27 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 });
+
+function showMessage(msg) {
+  if (document.readyState !== "complete" && document.readyState !== "interactive") {
+    window.addEventListener('DOMContentLoaded', () => showMessage(msg));
+    return;
+  }
+
+  const box = document.getElementById("messageBox");
+  if (!box) {
+    console.warn("messageBox not found in DOM");
+    return;
+  }
+
+  box.textContent = msg;
+  box.style.display = "block";
+  setTimeout(() => {
+    box.style.display = "none";
+  }, 4000);
+}
+
+
 
 function initializeTheme() {
   const html = document.documentElement;
@@ -204,9 +246,27 @@ function checkAnswer(selected, correct, clickedButton) {
 
 function endQuiz() {
   localStorage.setItem('quizScore', score);
-  saveScore(score);
+  const username = localStorage.getItem("quizUsername") || "Anonymous";
+
+  fetch('/api/save-score', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ username, score })
+  })
+  .then(res => res.json())
+  .then(response => {
+    if (!response.success) {
+      console.warn('Score submission failed:', response.message);
+    }
+  })
+  .catch(err => {
+    console.error('Failed to submit score:', err);
+  });
+
+  saveScore(score); 
   window.location.href = `/results.html`;
 }
+
 
 function startQuiz() {
   const username = localStorage.getItem("loggedInUser");
@@ -216,9 +276,9 @@ function startQuiz() {
 
 function saveScore(score) {
   const name = localStorage.getItem("quizUsername") || "Anonymous";
-  const leaderboard = JSON.parse(localStorage.getItem("quizLeaderboard")) || [];
-  leaderboard.push({ name, score });
-  localStorage.setItem("quizLeaderboard", JSON.stringify(leaderboard));
+  //const leaderboard = JSON.parse(localStorage.getItem("quizLeaderboard")) || [];
+ // leaderboard.push({ name, score });
+ // localStorage.setItem("quizLeaderboard", JSON.stringify(leaderboard));
 }
 
 function playResultSound(score) {
@@ -245,15 +305,27 @@ function revealScore() {
 function login() {
   const username = document.getElementById("username").value.trim();
   const password = document.getElementById("password").value;
-  const validUser = "user";
-  const validPass = "pass";
-  if (username === validUser && password === validPass) {
-    localStorage.setItem("loggedInUser", username);
-    window.location.href = "home.html";
-  } else {
-    alert("Invalid credentials");
-  }
+
+  fetch('/api/signin', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ username, password })
+  })
+  .then(res => res.json())
+  .then(data => {
+    if (data.success) {
+      localStorage.setItem("loggedInUser", username);
+      window.location.href = "home.html";
+    } else {
+      showMessage("Invalid credentials. Please try again.");
+    }
+  })
+  .catch(() => {
+    showMessage("Login failed. Please try again.");
+  });
 }
+
+
 
 function logout() {
   localStorage.removeItem("loggedInUser");
@@ -266,12 +338,19 @@ function checkLoginStatus() {
 }
 
 function showMainContent(username) {
-  document.getElementById("loginSection").style.display = "none";
-  document.getElementById("mainContent").style.display = "block";
-  document.getElementById("menuToggle").style.display = "block";
-  document.getElementById("sidebar").style.display = "flex";
-  document.getElementById("welcomeMessage").textContent = `Welcome, ${username}!`;
+  const loginSection = document.getElementById("loginSection");
+  const mainContent = document.getElementById("mainContent");
+  const menuToggle = document.getElementById("menuToggle");
+  const sidebar = document.getElementById("sidebar");
+  const welcomeMessage = document.getElementById("welcomeMessage");
+
+  if (loginSection) loginSection.style.display = "none";
+  if (mainContent) mainContent.style.display = "block";
+  if (menuToggle) menuToggle.style.display = "block";
+  if (sidebar) sidebar.style.display = "flex";
+  if (welcomeMessage) welcomeMessage.textContent = `Welcome, ${username}!`;
 }
+
 
 function showDashboard(username) {
   document.getElementById('navButtons').style.display = 'block';
@@ -319,9 +398,25 @@ function signup() {
   })
   .then(res => res.json())
   .then(response => {
-    alert(response.message);
     if (response.success) {
-      window.location.href = "login.html";
+      showMessage("Sign up successful!");
+      setTimeout(() => {
+        window.location.href = "login.html";
+      }, 2000);
+    } else {
+      showMessage(response.message || "Signup failed.");
     }
   });
+  
+
+
 }
+document.addEventListener('DOMContentLoaded', () => {
+  const loginForm = document.querySelector('.login-box');
+
+  if (loginForm) {
+    loginForm.addEventListener('submit', function (e) {
+      e.preventDefault(); 
+    });
+  }
+});

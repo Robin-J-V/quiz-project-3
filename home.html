@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" data-theme="dark">
+<html lang="en" data-theme="light">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -9,15 +9,12 @@
 </head>
 <body>
 
-  <!-- Hamburger Icon -->
   <div id="menuToggle" class="hamburger" onclick="toggleSidebar()" style="display: none;">
     &#9776;
   </div>
 
-  <!-- Overlay -->
   <div id="overlay" class="overlay" onclick="toggleSidebar()" style="display: none;"></div>
 
-  <!-- Sidebar -->
   <div id="sidebar" class="sidebar" style="display: none;">
     <div class="sidebar-top">
       <button onclick="location.href='profile.html'">👤 Profile</button>
@@ -26,33 +23,31 @@
       <button onclick="logout()">🔓 Sign Out</button>
     </div>
   </div>
-</div>
 
-<div class="theme-switch-wrapper">
-  <div class="theme-switch" id="themeSwitch" tabindex="0" role="switch">
-    <div class="switch-track">
-      <div class="switch-thumb"></div>
-    </div>
-    <div class="switch-icons">
-      <svg class="sun-icon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-        <circle cx="12" cy="12" r="5"></circle>
-        <line x1="12" y1="1" x2="12" y2="3"></line>
-        <line x1="12" y1="21" x2="12" y2="23"></line>
-        <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
-        <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
-        <line x1="1" y1="12" x2="3" y2="12"></line>
-        <line x1="21" y1="12" x2="23" y2="12"></line>
-        <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
-        <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
-      </svg>
-      <svg class="moon-icon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-        <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
-      </svg>
+  <div class="theme-switch-wrapper">
+    <div class="theme-switch" id="themeSwitch" tabindex="0" role="switch">
+      <div class="switch-track">
+        <div class="switch-thumb"></div>
+      </div>
+      <div class="switch-icons">
+        <svg class="sun-icon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="5"></circle>
+          <line x1="12" y1="1" x2="12" y2="3"></line>
+          <line x1="12" y1="21" x2="12" y2="23"></line>
+          <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+          <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+          <line x1="1" y1="12" x2="3" y2="12"></line>
+          <line x1="21" y1="12" x2="23" y2="12"></line>
+          <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+          <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+        </svg>
+        <svg class="moon-icon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+        </svg>
+      </div>
     </div>
   </div>
-</div>
 
-  <!-- Main Content -->
   <div id="mainContent">
     <h1 id="welcomeMessage">Welcome!</h1>
     <div class="nav-buttons">
@@ -84,27 +79,30 @@
 
       if (!user) {
         alert("Please log in first.");
-        window.location.href = "index.html";
+        window.location.href = "login.html";
         return;
       }
 
       if (hamburger) hamburger.style.display = "block";
       if (sidebar) sidebar.style.display = "flex";
       if (welcome) welcome.textContent = `Welcome, ${user}!`;
-    }
 
-    function startQuiz() {
-      const username = localStorage.getItem("loggedInUser");
-      if (!username) {
-        alert("Please log in to start the quiz.");
-        window.location.href = "index.html";
-        return;
+      const html = document.documentElement;
+      if (!localStorage.getItem('theme')) {
+        localStorage.setItem('theme', 'light');
+        html.setAttribute('data-theme', 'light');
+      } else {
+        html.setAttribute('data-theme', localStorage.getItem('theme'));
       }
-      localStorage.setItem("quizUsername", username);
-      location.href = "quiz.html";
+
+      const switchThumb = document.querySelector('.switch-thumb');
+      if (switchThumb) {
+        switchThumb.style.transform = localStorage.getItem('theme') === 'light' ? 'translateX(40px)' : 'translateX(0)';
+      }
     }
 
     window.addEventListener("DOMContentLoaded", checkLoginStatus);
   </script>
+  <script src="script.js"></script>
 </body>
 </html>
