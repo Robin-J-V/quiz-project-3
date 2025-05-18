@@ -3,15 +3,11 @@ const express = require('express');
 const path = require('path');
 const bodyParser = require('body-parser');
 const { connectToDB, getDB } = require('./db');
-const userRoutes = require('./user');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
 
 app.use(bodyParser.json());
-
-console.log("Registering user routes at /api");
-app.use('/api', userRoutes);
 app.use(express.static(path.join(__dirname)));
 
 function decodeHtml(html) {
@@ -55,7 +51,6 @@ app.get('/api/start-quiz', async (req, res) => {
 
     res.json({ questions: formatted });
   } catch (error) {
-    console.error('Trivia API error:', error.message);
     res.status(500).json({ error: error.message });
   }
 });
@@ -85,7 +80,6 @@ app.post('/api/submit-score', async (req, res) => {
     await db.collection('scores').insertOne({ username, score, timestamp: new Date() });
     res.json({ success: true, message: 'Score submitted.' });
   } catch (err) {
-    console.error('Score submission failed:', err);
     res.status(500).json({ success: false, message: 'Server error.' });
   }
 });
@@ -118,12 +112,14 @@ app.get('/api/leaderboard', async (req, res) => {
 
     res.json(topScores);
   } catch (err) {
-    console.error('Leaderboard fetch failed:', err);
     res.status(500).json({ message: 'Server error.' });
   }
 });
 
 connectToDB().then(() => {
+  const userRoutes = require('./user');
+  app.use('/api', userRoutes);
+
   app.listen(PORT, () => {
     console.log(`Server is live at http://localhost:${PORT}`);
   });

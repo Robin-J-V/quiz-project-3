@@ -2,8 +2,11 @@ const { MongoClient } = require('mongodb');
 require('dotenv').config();
 
 const uri = process.env.ATLAS_URI;
-const client = new MongoClient(uri);
+if (!uri) {
+  throw new Error("Missing ATLAS_URI in environment variables");
+}
 
+const client = new MongoClient(uri);
 let db;
 
 async function connectToDB() {
@@ -13,6 +16,7 @@ async function connectToDB() {
     console.log("Connected to MongoDB");
   } catch (err) {
     console.error("Error connecting MongoDB:", err);
+    throw err;
   }
 }
 
